@@ -4,11 +4,10 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#define N 4
 
 int main(int argc, char** argv){
 
-
+	int N = atoi(argv[1]);
 	int pid_pere = getpid();
 	int pid_courant;
 	int x;
