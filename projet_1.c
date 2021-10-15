@@ -3,19 +3,31 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-
+//-------------------gérer argc ok ?
+//------------------gérer malloc
+//-----------------père rouvrir les extremites d'ecritures ok?
+//---------------pas de redirection ok ?
 int main(int argc, char** argv){
 
-
+	if(argc !=2){
+		printf("Erreur d'argument. Usage : projet_0 [nb_processus]");
+		exit(1);
+	}
 	int pid_pere = getpid();
   	int N = atoi(argv[1]);
 	int x;
 	int pipe_pere[2];
 	int numero_fils;
+	int* tableau_tubes[N][2];
+	/*int* tableau_tubes[2] = malloc(sizeof(int[2])*N);
+	for (int k = 0; k < N; k++){
+		
+		tableau_tubes=malloc(sizeof(int[2]));*/
+
 	
 	//------------------------------CREATION DES TUBES----------------------------------------
 	
-	int tableau_tubes[N][2];
+	//tableau_tubes[N][2];
 	for(int i = 0; i < N; i++){
 		pipe(tableau_tubes[i]);
 	
@@ -53,6 +65,7 @@ int main(int argc, char** argv){
 // ---------------------------------------------LES FILS ----------------------------------------------------
 //--------------------------------------------------------------------------------------------------------
 				numero_fils = getpid()-pid_pere;
+				close(pipe_pere[0]);
 		
     //----------------------------fermeture des pipes inutilisés depuis le fils i----------------------------
     //------------------------------------------------------------------------------------------------------
@@ -63,14 +76,8 @@ int main(int argc, char** argv){
 		   			close(tableau_tubes[N][1]);   //fermeture de l'entrée du tube N dans le fils 0
 			    		close(tableau_tubes[0][0]);   //fermeture de la sortie du tube 0 dans le fils 0
 
-
-					close(0);			//redirection sortie std vers pipe
-					dup(tableau_tubes[0][1]);
-					close(tableau_tubes[0][1]);
-
-					close(1);			//redirection entrée std vers pipe
-					dup(tableau_tubes[N][0]);
-					close(tableau_tubes[N][0]);
+					x=2;
+					putchar(x);
 			        }
 
         //---------------------------CAS GENERAL----------------------------------------------------------
@@ -85,39 +92,33 @@ int main(int argc, char** argv){
 				    if(i == numero_fils - 2){                     //si on est sur le pipe entrant
 					close(tableau_tubes[i][1]);                 //on ferme l'entrée du pipe rentrant dans le node
 
-					close(0);                         //redirection de l'entrée standard vers le pipe
-					dup(tableau_tubes[i][0]);         
-					close(tableau_tubes[i][0]);
 
 
 				    }
 				    if(i == numero_fils - 1){             //si on est sur le pipe sortant
 					close(tableau_tubes[i][0]);         //on ferme la sortie de ce pipe
 
-					close(1);                         //redirection de la sortie standard vers le pipe
-					dup(tableau_tubes[i][1]);         
-					close(tableau_tubes[i][1]);
             			    }
 				
 
 
         			}
-				printf("\n Fils n° %d pid = %d\n", numero_fils,getpid());
+				scanf("%d",&x);
+
+				if (write(pipe_pere[1], &x, sizeof(char)) < 0){
+				        perror("write");
+   				}
         
 		 
-		
-		//redirection de la sortie standard vers le pipe
-		/*close(1);          
-		dup(tube1[1]);
-		close(tube1[1]);*/
+
 		
 	//---------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------FIN DES FILS--------------------------------------------------------------
 			    default:
 		//comportement du père
-				wait(NULL);
-				close(tableau_tubes[i][0]);
-				close(tableau_tubes[i][1]);
+				//wait(NULL);
+				close(tableau_tubes[i][0]);  //ferme toutes les extremités sortantes pour le père
+				
 			}
 		
 
@@ -126,8 +127,18 @@ int main(int argc, char** argv){
 	if(getpid()==pid_pere){
 		
 		printf("pid du père : %d\n",getpid());
+		close(pipe_pere[1]);
+		if (read(pipe_pere[0], &x, sizeof(char *)) < 0){
+				        perror("read");
+   				}
+		printf("valeurs de x : %d\n",x);
+
+		
+		while(wait(NULL)!=-1);
 
 	}
+	
+	
 
 
 
