@@ -18,7 +18,7 @@ int main(int argc, char** argv){
 	int x;
 	int pipe_pere[2];
 	int numero_fils;
-	int* tableau_tubes[N][2];
+	int tableau_tubes[N][2];
 	/*int* tableau_tubes[2] = malloc(sizeof(int[2])*N);
 	for (int k = 0; k < N; k++){
 		
@@ -27,7 +27,6 @@ int main(int argc, char** argv){
 	
 	//------------------------------CREATION DES TUBES----------------------------------------
 	
-	//tableau_tubes[N][2];
 	for(int i = 0; i < N; i++){
 		pipe(tableau_tubes[i]);
 	
@@ -73,11 +72,10 @@ int main(int argc, char** argv){
 
 	//--------------------------CAS INITIAL : Node 1 --------------------------------
 				if(numero_fils == 1){
-		   			close(tableau_tubes[N][1]);   //fermeture de l'entrée du tube N dans le fils 0
-			    		close(tableau_tubes[0][0]);   //fermeture de la sortie du tube 0 dans le fils 0
+ 			    		close(tableau_tubes[N][1]);   //fermeture de l'entrée du tube N dans le fils 0
+  		    			close(tableau_tubes[0][0]);   //fermeture de la sortie du tube 0 dans le fils 0
 
-					x=2;
-					putchar(x);
+				
 			        }
 
         //---------------------------CAS GENERAL----------------------------------------------------------
@@ -103,11 +101,7 @@ int main(int argc, char** argv){
 
 
         			}
-				scanf("%d",&x);
-
-				if (write(pipe_pere[1], &x, sizeof(char)) < 0){
-				        perror("write");
-   				}
+				
         
 		 
 
@@ -124,30 +118,68 @@ int main(int argc, char** argv){
 
 		}
 	}
+//-------------------------------------------FIN D'INITIALISATION TUBES---------------------------------------------------------------
+//-------------------------------------------FIN D'INITIALISATION TUBES---------------------------------------------------------------
+
+
+//--------------------------------------COMPORTEMENT DU PERE-------------------------------------------
+
 	if(getpid()==pid_pere){
 		
 		printf("pid du père : %d\n",getpid());
 		close(pipe_pere[1]);
-		if (read(pipe_pere[0], &x, sizeof(char *)) < 0){
-				        perror("read");
-   				}
+		if (read(pipe_pere[0], &x, sizeof(int)) < 0){
+			perror("read père");
+   		}
 		printf("valeurs de x : %d\n",x);
 
 		
 		while(wait(NULL)!=-1);
 
 	}
-	
-	
+
+   	
+
+
+
+//--------------------------------------------lecture depuis les fils-------------------------------------
+
+	if(numero_fils==1){
+
+			x=72; //test de la communication inter fils
+			if (write(tableau_tubes[0][1], &x, sizeof(int)) < 0){
+		        	perror("write");
+			}
+		
+	}
+	if(numero_fils > 1){
+
+		if (read(tableau_tubes[numero_fils-2][0], &x, sizeof(int)) < 0){
+			perror("read fils i");
+   		}
+	}
+
+//---------------------------------------------ECRITURE DEPUIS LES FILS-----------------------------	
+
+
+	if(numero_fils < N){			
+
+		if (write(tableau_tubes[numero_fils-1][1], &x, sizeof(int)) < 0){
+				        perror("write");
+   				}
 
 
 
 
+	}
+
+	if(numero_fils == N){
+		if (write(pipe_pere[1], &x, sizeof(int)) < 0){
+			perror("write pipe père");
+   		}
 
 
-
-
-
+	}
 
 
 
