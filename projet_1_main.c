@@ -24,16 +24,35 @@ int main(int argc, char** argv){
 
 	numero_fils = creer_fils(N);
 
+	fermer_pipes(N, pid_pere, numero_fils, tableau_tubes, pipe_pere);
+
+
+	
+
 	if (numero_fils == 1){
 		x = 5;
-		ecrire(x);
+		if (write(tableau_tubes[0][1], &x, sizeof(int)) < 0){
+		perror("write");
+   		}
 	}
-	else if(numero_fils != -1){
-		x = lire();
-		ecrire(x);
-	}
-	if(numero_fils == N){
-		ecrire_pere(x);
+	else if(getpid() != pid_pere){
+		if (read(tableau_tubes[numero_fils-2][0], &x, sizeof(int)) < 0){
+			perror("read");
+   		}
+		printf("Je suis le fils %d et j'ai lu x = %d\n", numero_fils, x);
+		if (write(tableau_tubes[numero_fils - 1][1], &x, sizeof(int)) < 0){
+			perror("write");
+   		}
+		if(numero_fils == N){
+			if (write(pipe_pere[1], &x, sizeof(int)) < 0){
+				perror("write");
+			}
+		}
+	}else if (getpid() == pid_pere){
+		if (read(pipe_pere[0], &x, sizeof(int)) < 0){
+			perror("read père");
+		}
+		printf("zfzef %d", x);
 	}
  
 
