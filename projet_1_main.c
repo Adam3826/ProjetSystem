@@ -34,6 +34,8 @@ int main(int argc, char** argv){
 		if (write(tableau_tubes[0][1], &x, sizeof(int)) < 0){
 		perror("write");
    		}
+		printf("le fils 1 meurt\n");
+		exit(0);
 	}
 	else if(getpid() != pid_pere){
 		if (read(tableau_tubes[numero_fils-2][0], &x, sizeof(int)) < 0){
@@ -48,11 +50,17 @@ int main(int argc, char** argv){
 				perror("write");
 			}
 		}
-	}else if (getpid() == pid_pere){
+		printf("le fils %d meurt\n",numero_fils);
+		exit(0);
+		
+	}
+	else if (getpid() == pid_pere){
 		if (read(pipe_pere[0], &x, sizeof(int)) < 0){
 			perror("read père");
 		}
-		printf("zfzef %d", x);
+		printf("le père a lu x = %d\n", x);
+		while(wait(NULL)!= -1);
+		printf("les fils sont morts\n");
 	}
  
 
