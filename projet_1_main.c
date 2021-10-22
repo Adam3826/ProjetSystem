@@ -1,3 +1,6 @@
+//ZODJIHOUE Hubert
+//MOUSSOLNA Adam
+
 #include "projet_1.h"
 
 
@@ -28,7 +31,7 @@ int main(int argc, char** argv){
 
 
 	
-
+//--------------------------------ECRITURE D'UN ENTIER DANS L'ANNEAU DES TUBES-----------------------------------------------------------------
 	if (numero_fils == 1){
 		x = 5;
 		if (write(tableau_tubes[0][1], &x, sizeof(int)) < 0){
@@ -37,14 +40,23 @@ int main(int argc, char** argv){
 		printf("le fils 1 meurt\n");
 		exit(0);
 	}
+
+
+
+//-------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------LES FILS------------------------------------------------------------------------------
 	else if(getpid() != pid_pere){
 		if (read(tableau_tubes[numero_fils-2][0], &x, sizeof(int)) < 0){
 			perror("read");
    		}
 		printf("Je suis le fils %d et j'ai lu x = %d\n", numero_fils, x);
+
 		if (write(tableau_tubes[numero_fils - 1][1], &x, sizeof(int)) < 0){
 			perror("write");
    		}
+		if (write(pipe_pere[1], &x, sizeof(int)) < 0){
+				perror("write");
+		}
 		if(numero_fils == N){
 			if (write(pipe_pere[1], &x, sizeof(int)) < 0){
 				perror("write");
@@ -54,11 +66,16 @@ int main(int argc, char** argv){
 		exit(0);
 		
 	}
+//-----------------------------------------------FIN DES FILS--------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------
 	else if (getpid() == pid_pere){
-		if (read(pipe_pere[0], &x, sizeof(int)) < 0){
-			perror("read père");
+		for(int k = 2; k < N; k++){
+			if (read(pipe_pere[0], &x, sizeof(int)) < 0){
+				perror("read père");
+			}
+			printf("le père a lu x = %d\n", x);
 		}
-		printf("le père a lu x = %d\n", x);
+		
 		while(wait(NULL)!= -1);
 		printf("les fils sont morts\n");
 	}

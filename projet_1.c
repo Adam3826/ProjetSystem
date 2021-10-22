@@ -1,3 +1,6 @@
+//ZODJIHOUE Hubert
+//MOUSSOLNA Adam
+
 #include "projet_1.h"
 
 
@@ -87,6 +90,10 @@ void fermer_pipes(int N, int pid_pere, int numero_fils, int tableau_tubes[N][2],
 			}
 		}
 
+	}else if(getpid() == pid_pere){ //--------------------------------FERMETURE DES EXTREMITES DE LECTURE DEPUIS LE PERE--------------------------------------
+		for(int j = 0; j < N; j++){
+			close(tableau_tubes[j][0]);
+		}
 	}
 }
 

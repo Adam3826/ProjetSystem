@@ -10,7 +10,7 @@
 void creer_pipes(int N,int tableau_tubes[N][2]);
 
 
-//crée N processus fils sans créer de petit fils, renvoie le numéro du node actuel (1 à N)
+//crée N processus fils sans créer de petit fils, renvoie le numéro du fils actuel (1 à N)
 int creer_fils(int N);
 
 //Ferme les pipes non utilisés et les extrémités non utilisées par les fils
