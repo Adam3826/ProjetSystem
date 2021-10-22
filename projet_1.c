@@ -7,7 +7,6 @@
 void creer_pipes(int N,int tableau_tubes[N][2]){
 	for(int i = 0; i < N; i++){
 		pipe(tableau_tubes[i]);
-		//printf("pipe %d bien créé\n",i);
 	
 	}
 

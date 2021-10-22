@@ -36,7 +36,7 @@ int main(int argc, char** argv){
 		}
 
 	}if(getpid()==pid_pere){
-		printf("père\n");
+		printf("père : PID = %d\n",getpid());
 	}
 
 

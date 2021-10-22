@@ -7,7 +7,7 @@
 int main(int argc, char** argv){
 
 	if(argc !=2){
-		printf("Erreur d'argument. Usage : projet_1 [nb_processus]");
+		printf("Erreur d'argument. Usage : projet_1 [nb_processus]\n");
 		exit(1);
 	}
 
