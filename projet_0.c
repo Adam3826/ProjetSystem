@@ -7,6 +7,11 @@
 
 int main(int argc, char** argv){
 
+	if(argc != 2){
+		printf("erreur d'arguments. utilisation : ./projet_0 nombre_fils\n");
+		exit(1);
+	}
+
 	int N = atoi(argv[1]);
 	int pid_pere = getpid();
 	//int pid_courant;

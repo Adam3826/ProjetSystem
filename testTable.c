@@ -30,6 +30,7 @@ void ajouter_valeurs(PTable_entry *table){
 
 	}
 
+
 }
 
 
